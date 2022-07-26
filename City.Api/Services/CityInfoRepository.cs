@@ -13,9 +13,34 @@ namespace CityInfo.Api.Services
             _cityInfoContext = cityInfoContext ?? throw new ArgumentNullException(nameof(cityInfoContext));
         }
 
-        public async Task<IEnumerable<City>> GetCitiesAsync()
-        {
-            return await _cityInfoContext.Cities.OrderBy(r => r.Name).ToListAsync();
+
+        public async Task<(IEnumerable<City>, PaginationMetadata)> GetCitiesAsync(string? name, string? searchQuery,
+            int pageNumber, int pageSize)
+        { 
+
+            var collection = _cityInfoContext.Cities as IQueryable<City>;
+            if (!string.IsNullOrWhiteSpace(name))
+            {
+                name = name.Trim();
+                collection = collection.Where(c => c.Name == name);
+            }
+
+            if (!string.IsNullOrWhiteSpace(searchQuery))
+            {
+                searchQuery = searchQuery.Trim();
+                collection = collection.Where(a => a.Name.Contains(searchQuery)
+                    || (a.Description != null && a.Description.Contains(searchQuery)));
+            }
+
+            var totalItemCount = await collection.CountAsync();
+            var paginationMetadata = new PaginationMetadata(totalItemCount, pageSize, pageNumber);
+
+            var collectionToReturn = await collection.OrderBy(c => c.Name)
+                .Skip(pageSize * (pageNumber - 1))
+                .Take(pageSize)
+                .ToListAsync();
+
+            return (collectionToReturn, paginationMetadata);
         }
 
 
