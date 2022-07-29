@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>CityInfo.Api</name>
+    </assembly>
+    <members>
+        <member name="M:CityInfo.Api.Controllers.CitiesController.GetCities(System.String,System.String,System.Int32,System.Int32)">
+            <summary>
+            City collection represents all cities documented in CityInfo database.
+            </summary>
+            <param name="name"></param>
+            <param name="searchQuery">Simple text search against name and description properties</param>
+            <param name="pageNumber"></param>
+            <param name="pageSize">Maximum page size is 20</param>
+            <returns></returns>
+            <response code="406">Only supports application/json as accept type</response>
+        </member>
+        <member name="M:CityInfo.Api.Controllers.CitiesController.GetCity(System.Int32,System.Boolean)">
+            <summary>
+            Returns a specified City.  By default will not return Points of Interest for that city, but this can be override with parameter includePointsOfInterest=true
+            </summary>
+            <param name="Id"></param>
+            <param name="includePointsOfInterest"></param>
+            <returns>IActionResult</returns>
+            <response code="404">requested City was not found in Cities database</response>
+            <response code="400">Request is not well formed</response>
+        </member>
+        <member name="T:CityInfo.Api.Models.CityWithoutPointsOfInterestDto">
+            <summary>
+            Simple list of Cities without the points of interest collections.
+            This is the default result.
+            </summary>
+        </member>
+    </members>
+</doc>
